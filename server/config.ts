@@ -9,6 +9,10 @@ function validate(key: string, defaultValue?: any) {
 }
 
 export const config = {
+  jwt: {
+    secretKey: validate("JWT_SECRET"),
+    expiresInSec: parseInt(validate("JWT_EXPIRES_SEC", 86400)),
+  },
   db: {
     connect: validate("DB_CONNECTION_STRING"),
   },

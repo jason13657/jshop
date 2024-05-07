@@ -3,8 +3,11 @@ import cors from "cors";
 import helmet from "helmet";
 import morgan from "morgan";
 import "express-async-errors";
-import { connectDB } from "../db/database";
-import { config } from "../config";
+import { connectDB } from "./db/database";
+import { config } from "./config";
+import * as trpcExpress from "@trpc/server/adapters/express";
+import { createContext } from "./trpc/context";
+import { appRouter } from "./trpc/trpc";
 
 const app = express();
 
@@ -16,6 +19,14 @@ app.use(express.json());
 app.get("/", (req, res) => {
   res.send("Hello");
 });
+
+app.use(
+  "/trpc",
+  trpcExpress.createExpressMiddleware({
+    router: appRouter,
+    createContext: createContext,
+  })
+);
 
 connectDB()
   .then(() => {
