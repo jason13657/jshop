@@ -10,7 +10,7 @@ declare module "jsonwebtoken" {
 }
 export interface JWTHandler {
   create: (value: string, admin?: boolean) => string;
-  verify: (token: string) => jwt.UserIDJwtPayload;
+  verify: (token: string) => Promise<jwt.UserIDJwtPayload>;
 }
 
 export const jwtHandler: JWTHandler = {
@@ -18,7 +18,11 @@ export const jwtHandler: JWTHandler = {
     return jwt.sign({ id, admin }, config.jwt.secretKey, { expiresIn: config.jwt.expiresInSec });
   },
   verify: (token: string) => {
-    return <UserIDJwtPayload>jwt.verify(token, config.jwt.secretKey);
+    try {
+      return Promise.resolve(<UserIDJwtPayload>jwt.verify(token, config.jwt.secretKey));
+    } catch (error) {
+      return Promise.reject("Faild to decode");
+    }
   },
 };
 

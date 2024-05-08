@@ -59,7 +59,7 @@ export default class AuthController {
     const token = authHeader.split(" ")[1];
 
     try {
-      const { id } = this.jwt.verify(token);
+      const { id } = await this.jwt.verify(token);
       const user = await this.userRepository.findById(id);
       if (!user) {
         return res.status(401).json({ message: "User not found" });

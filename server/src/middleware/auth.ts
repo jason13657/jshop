@@ -13,19 +13,20 @@ export default class AuthMiddleware {
   withAuth = async (req: Request, res: Response, next: NextFunction) => {
     const authHeader = req.get("Authorization");
     if (!(authHeader && authHeader.startsWith("Bearer "))) {
-      return res.status(401).json({ message: "No bearer request" });
+      return res.status(401).json({ message: "No Bearer on header" });
     }
 
     const token = authHeader.split(" ")[1];
 
     try {
-      const { id } = this.jwtHandler.verify(token);
+      const { id } = await this.jwtHandler.verify(token);
       const user = await this.userRepository.findById(id);
       if (!user) {
         return res.status(401).json({ message: "User not found" });
       }
       req.userId = user.id;
       req.token = token;
+
       next();
     } catch (error) {
       return res.status(401).json({ message: "Invalid jwt token" });
@@ -41,7 +42,7 @@ export default class AuthMiddleware {
     const token = authHeader.split(" ")[1];
 
     try {
-      const { id, admin } = this.jwtHandler.verify(token);
+      const { id, admin } = await this.jwtHandler.verify(token);
       const user = await this.userRepository.findById(id);
       if (!user) {
         return res.status(401).json({ message: "User not found" });
