@@ -1,4 +1,4 @@
-server/node_modules
+server/coverage/
+server/node_modules/
 server/.env
-server/dist
-server/coverage
+server/dist/
