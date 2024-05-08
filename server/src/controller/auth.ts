@@ -23,8 +23,7 @@ export default class AuthController {
     const isPasswordValid = this.passwordEncryptor.compare(password, user.password);
     if (!isPasswordValid) return res.status(401).json({ message: "invalid password" });
 
-    const token = this.jwt.create(user.id);
-
+    const token = this.jwt.create(user.id, user.admin && user.admin);
     res.status(201).json({ token, username });
   };
 
@@ -44,6 +43,7 @@ export default class AuthController {
       name,
       password: hashed,
       email,
+      admin: false,
     });
 
     const token = this.jwt.create(userId);

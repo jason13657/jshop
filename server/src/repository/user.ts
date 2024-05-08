@@ -6,6 +6,7 @@ export type UserT = {
   email: string;
   password: string;
   id: string;
+  admin: boolean;
 };
 
 const userSchema = new Schema<UserT>({
@@ -13,6 +14,7 @@ const userSchema = new Schema<UserT>({
   name: { type: String, required: true },
   email: { type: String, required: true },
   password: { type: String, required: true },
+  admin: { type: Boolean, required: true },
 });
 
 setSchemaID(userSchema);
