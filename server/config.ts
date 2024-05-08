@@ -19,4 +19,7 @@ export const config = {
   host: {
     port: parseInt(validate("HOST_PORT", 8080)),
   },
+  security: {
+    saltRounds: 12,
+  },
 };

@@ -1,13 +1,15 @@
-import express from "express";
+import express, { NextFunction, Request, Response } from "express";
 import cors from "cors";
 import helmet from "helmet";
 import morgan from "morgan";
 import "express-async-errors";
-import { connectDB } from "./db/database";
+import { connectDB } from "./src/db/database";
 import { config } from "./config";
-import * as trpcExpress from "@trpc/server/adapters/express";
-import { createContext } from "./trpc/context";
-import { appRouter } from "./trpc/trpc";
+import { authRouter } from "./src/router/auth";
+import AuthController from "./src/controller/auth";
+import { userRepository } from "./src/repository/user";
+import { jwtHandler } from "./src/security/jwt";
+import { passwordEncryptor } from "./src/security/password";
 
 const app = express();
 
@@ -16,17 +18,12 @@ app.use(helmet());
 app.use(morgan("tiny"));
 app.use(express.json());
 
-app.get("/", (req, res) => {
-  res.send("Hello");
-});
+app.use("/auth", authRouter(new AuthController(userRepository, jwtHandler, passwordEncryptor)));
 
-app.use(
-  "/trpc",
-  trpcExpress.createExpressMiddleware({
-    router: appRouter,
-    createContext: createContext,
-  })
-);
+app.use((err: any, req: Request, res: Response, next: NextFunction) => {
+  console.error(err);
+  res.sendStatus(500);
+});
 
 connectDB()
   .then(() => {
