@@ -1,4 +1,6 @@
 import jwt, { UserIDJwtPayload } from "jsonwebtoken";
+import { Request, Response, NextFunction } from "express";
+
 import { config } from "../../config";
 import { boolean } from "zod";
 
@@ -11,6 +13,7 @@ declare module "jsonwebtoken" {
 export interface JWTHandler {
   create: (value: string, admin?: boolean) => string;
   verify: (token: string) => Promise<jwt.UserIDJwtPayload>;
+  secureToken: (res: Response, token: string) => void;
 }
 
 export const jwtHandler: JWTHandler = {
@@ -23,6 +26,15 @@ export const jwtHandler: JWTHandler = {
     } catch (error) {
       return Promise.reject("Faild to decode");
     }
+  },
+  secureToken: (res: Response, token: string) => {
+    // the method to secure token for xss attack
+    res.cookie("token", token, {
+      maxAge: config.jwt.expiresInSec * 1000, // this is mil sec
+      httpOnly: true,
+      secure: true,
+      sameSite: "none",
+    });
   },
 };
 

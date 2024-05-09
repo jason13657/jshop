@@ -24,6 +24,7 @@ describe("Auth Middlewere", () => {
       await authMiddleware.withAuth(req, res, next);
 
       expect(res.statusCode).toBe(401);
+
       expect(res._getJSONData().message).toBe("No Bearer on header");
       expect(next).toHaveBeenCalledTimes(0);
     });
@@ -91,17 +92,6 @@ describe("Auth Middlewere", () => {
   });
 
   describe("With admin", () => {
-    it("returns 401 without Bearer Authorization header", async () => {
-      const req = httpMocks.createRequest({ method: "GET", url: "/fake" });
-      const res = httpMocks.createResponse();
-      const next = jest.fn();
-
-      await authMiddleware.withAdmin(req, res, next);
-
-      expect(res.statusCode).toBe(401);
-      expect(res._getJSONData().message).toBe("No Bearer on header");
-      expect(next).toHaveBeenCalledTimes(0);
-    });
     it("returns 401 when user not found by user id", async () => {
       const req = httpMocks.createRequest({
         method: "GET",

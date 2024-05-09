@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import { UserRepository } from "../repository/user";
 import { PasswordEncryptor } from "../security/password";
 import { JWTHandler } from "../security/jwt";
+import { config } from "../../config";
 
 export default class AuthController {
   private userRepository: UserRepository;
@@ -29,6 +30,7 @@ export default class AuthController {
     }
 
     const token = this.jwt.create(user.id, user.admin && user.admin);
+    this.jwt.secureToken(res, token);
     res.status(201).json({ token, username, admin: user.admin ?? false });
   };
 
@@ -56,7 +58,7 @@ export default class AuthController {
     });
 
     const token = this.jwt.create(userId);
-
+    this.jwt.secureToken(res, token);
     res.status(201).json({ token, username });
   };
 
@@ -73,6 +75,7 @@ export default class AuthController {
       if (user === null) {
         return res.status(401).json({ message: "User not found" });
       }
+      this.jwt.secureToken(res, token);
       res.status(200).json({ token, username: user.username, admin: user.admin ?? false });
     } catch (error) {
       return res.status(401).json({ message: "Invalid jwt token" });

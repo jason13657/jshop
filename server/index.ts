@@ -3,6 +3,7 @@ import cors from "cors";
 import helmet from "helmet";
 import morgan from "morgan";
 import "express-async-errors";
+import cookieParser from "cookie-parser";
 import { connectDB } from "./src/db/database";
 import { config } from "./config";
 import { authRouter } from "./src/router/auth";
@@ -13,10 +14,15 @@ import { passwordEncryptor } from "./src/security/password";
 
 const app = express();
 
-app.use(cors());
+app.use(express.json());
+app.use(cookieParser());
+app.use(
+  cors({
+    credentials: true,
+  })
+);
 app.use(helmet());
 app.use(morgan("tiny"));
-app.use(express.json());
 
 app.use("/auth", authRouter(new AuthController(userRepository, jwtHandler, passwordEncryptor)));
 

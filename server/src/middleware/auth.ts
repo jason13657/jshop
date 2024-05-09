@@ -10,13 +10,29 @@ export default class AuthMiddleware {
     this.jwtHandler = jwtHandler;
   }
 
-  withAuth = async (req: Request, res: Response, next: NextFunction) => {
+  private validateToken = (req: Request): string | undefined => {
+    let token;
     const authHeader = req.get("Authorization");
-    if (!(authHeader && authHeader.startsWith("Bearer "))) {
-      return res.status(401).json({ message: "No Bearer on header" });
+    if (authHeader && authHeader.startsWith("Bearer ")) {
+      token = authHeader.split(" ")[1];
+      return token;
     }
 
-    const token = authHeader.split(" ")[1];
+    if (req.cookies["token"]) {
+      token = req.cookies["token"];
+      return token;
+    }
+
+    return;
+  };
+
+  withAuth = async (req: Request, res: Response, next: NextFunction) => {
+    const token = this.validateToken(req);
+
+    if (!token) {
+      res.status(401).json({ message: "No Bearer on header" });
+      return;
+    }
 
     try {
       const { id } = await this.jwtHandler.verify(token);
@@ -34,12 +50,12 @@ export default class AuthMiddleware {
   };
 
   withAdmin = async (req: Request, res: Response, next: NextFunction) => {
-    const authHeader = req.get("Authorization");
-    if (!(authHeader && authHeader.startsWith("Bearer "))) {
-      return res.status(401).json({ message: "No Bearer on header" });
-    }
+    const token = this.validateToken(req);
 
-    const token = authHeader.split(" ")[1];
+    if (!token) {
+      res.status(401).json({ message: "No Bearer on header" });
+      return;
+    }
 
     try {
       const { id, admin } = await this.jwtHandler.verify(token);
