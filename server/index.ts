@@ -11,7 +11,7 @@ import AuthController from "./src/controller/auth";
 import { userRepository } from "./src/repository/user";
 import { jwtHandler } from "./src/security/jwt";
 import { encryptor } from "./src/security/encryptor";
-import AuthMiddleware from "./src/middleware/auth";
+import { validateCSRF } from "./src/middleware/csrf";
 
 const app = express();
 
@@ -26,6 +26,7 @@ app.use(helmet());
 app.use(morgan("tiny"));
 
 // router
+app.use(validateCSRF);
 app.use("/auth", authRouter(new AuthController(userRepository, jwtHandler, encryptor, config.security.csrfToken)));
 
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {

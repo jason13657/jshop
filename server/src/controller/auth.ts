@@ -63,7 +63,7 @@ export default class AuthController {
     res.status(201).json({ token, username });
   };
 
-  signOut = async (req: Request, res: Response) => {
+  signOut = (req: Request, res: Response) => {
     res.cookie("token", "");
     res.status(200).json({ message: "Sign out" });
   };

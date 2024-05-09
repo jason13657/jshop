@@ -272,4 +272,33 @@ describe("Auth Controller", () => {
       expect(res._getJSONData().message).toBe("Invalid jwt token");
     });
   });
+
+  describe("Sign out", () => {
+    it("return 200 and cleans response token", () => {
+      const req = httpMocks.createRequest();
+      const res = httpMocks.createResponse();
+      res.cookie("token", "easter egg");
+
+      authController.signOut(req, res);
+
+      expect(res.statusCode).toBe(200);
+      expect(res._getJSONData().message).toBe("Sign out");
+      expect(res.cookies["token"].value).toBe("");
+    });
+  });
+
+  describe("Csrf", () => {
+    it("returns 200 and token", async () => {
+      const token = getFakeToken();
+      const req = httpMocks.createRequest();
+      const res = httpMocks.createResponse();
+
+      encryptor.hash = jest.fn(() => Promise.resolve(token));
+
+      await authController.csrf(req, res);
+
+      expect(res.statusCode).toBe(200);
+      expect(res._getJSONData().csrfToken).toBe(token);
+    });
+  });
 });
