@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
-import { UserRepository, UserT } from "../repository/user";
+import { UserRepository } from "../repository/user";
 import { PasswordEncryptor } from "../security/password";
-import { JWTHandler, createJwtToken } from "../security/jwt";
+import { JWTHandler } from "../security/jwt";
 
 export default class AuthController {
   private userRepository: UserRepository;
@@ -22,10 +22,15 @@ export default class AuthController {
     const { username, password } = req.body;
 
     const user = await this.userRepository.findByUsername(username);
-    if (!user) return res.status(401).json({ message: "invalid username" });
 
-    const isPasswordValid = this.passwordEncryptor.compare(password, user.password);
-    if (!isPasswordValid) return res.status(401).json({ message: "invalid password" });
+    if (user === null) {
+      return res.status(401).json({ message: "Invalid username" });
+    }
+
+    const isPasswordValid = await this.passwordEncryptor.compare(password, user.password);
+    if (!isPasswordValid) {
+      return res.status(401).json({ message: "Invalid password" });
+    }
 
     const token = this.jwt.create(user.id, user.admin && user.admin);
     res.status(201).json({ token, username, admin: user.admin ?? false });
@@ -35,11 +40,14 @@ export default class AuthController {
     const { username, password, email, name } = req.body;
 
     const usernameCheck = await this.userRepository.findByUsername(username);
-    if (usernameCheck)
+    if (usernameCheck) {
       return res.status(409).json({ message: "Username already exists" });
+    }
 
     const emailCheck = await this.userRepository.findByEmail(email);
-    if (emailCheck) return res.status(409).json({ message: "Email already exists" });
+    if (emailCheck) {
+      return res.status(409).json({ message: "Email already exists" });
+    }
 
     const hashed = await this.passwordEncryptor.hash(password);
 
