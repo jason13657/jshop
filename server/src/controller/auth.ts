@@ -8,11 +8,7 @@ export default class AuthController {
   private passwordEncryptor: PasswordEncryptor;
   private jwt: JWTHandler;
 
-  constructor(
-    userRepository: UserRepository,
-    jwtHandler: JWTHandler,
-    passwordEncryptor: PasswordEncryptor
-  ) {
+  constructor(userRepository: UserRepository, jwtHandler: JWTHandler, passwordEncryptor: PasswordEncryptor) {
     this.userRepository = userRepository;
     this.passwordEncryptor = passwordEncryptor;
     this.jwt = jwtHandler;
@@ -64,22 +60,20 @@ export default class AuthController {
     res.status(201).json({ token, username });
   };
 
-  me = async (req: Request, res: Response, next: NextFunction) => {
+  me = async (req: Request, res: Response) => {
     const authHeader = req.get("Authorization");
     if (!(authHeader && authHeader.startsWith("Bearer "))) {
-      return res.status(401).json({ message: "No bearer request" });
+      return res.status(401).json({ message: "No Bearer on header" });
     }
     const token = authHeader.split(" ")[1];
 
     try {
       const { id } = await this.jwt.verify(token);
       const user = await this.userRepository.findById(id);
-      if (!user) {
+      if (user === null) {
         return res.status(401).json({ message: "User not found" });
       }
-      res
-        .status(200)
-        .json({ token, username: user.username, admin: user.admin ?? false });
+      res.status(200).json({ token, username: user.username, admin: user.admin ?? false });
     } catch (error) {
       return res.status(401).json({ message: "Invalid jwt token" });
     }
