@@ -11,21 +11,22 @@ server/dist/
 # dependencies
 client/node_modules
 client/.pnp
-client.pnp.js
+client/.pnp.js
 
-client# testing
+# testing
 client/coverage
 
 client# production
 client/build
 
-client# misc
-client.DS_Store
-client.env.local
-client.env.development.local
-client.env.test.local
-client.env.production.local
+client/# misc
+client/.DS_Store
+client/.env
+client/.env.local
+client/.env.development.local
+client/.env.test.local
+client/.env.production.local
 
-clientnpm-debug.log*
-clientyarn-error.log*
-clientyarn-debug.log*
+client/npm-debug.log*
+client/yarn-debug.log*
+client/yarn-error.log*
