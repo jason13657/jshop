@@ -1,10 +1,9 @@
 import AuthMiddleware from "../auth";
 
-import { faker } from "@faker-js/faker";
 import httpMocks from "node-mocks-http";
 import { UserT, userRepository } from "../../repository/user";
 import { jwtHandler } from "../../security/jwt";
-import { getFakeUserTObject } from "../../utils/fake";
+import { getFakeJWTToken, getFakeUserTObject } from "../../utils/fake";
 
 jest.mock("../../security/jwt");
 jest.mock("../../repository/user");
@@ -49,7 +48,7 @@ describe("Auth Middlewere", () => {
       expect(next).toHaveBeenCalledTimes(0);
     });
     it("passes with valid Authorization header and token", async () => {
-      const token = faker.string.alphanumeric(128);
+      const token = getFakeJWTToken();
 
       const req = httpMocks.createRequest({
         method: "GET",
@@ -166,8 +165,7 @@ describe("Auth Middlewere", () => {
       expect(next).toHaveBeenCalledTimes(0);
     });
     it("passes with valid Authorization header and token and repository data", async () => {
-      const token = faker.string.alphanumeric(128);
-
+      const token = getFakeJWTToken();
       const req = httpMocks.createRequest({
         method: "GET",
         url: "/fake",
@@ -179,9 +177,7 @@ describe("Auth Middlewere", () => {
       const next = jest.fn();
       const user = getFakeUserTObject({ admin: true });
 
-      jwtHandler.verify = jest.fn((token) =>
-        Promise.resolve({ id: user.id, admin: true })
-      );
+      jwtHandler.verify = jest.fn((token) => Promise.resolve({ id: user.id, admin: true }));
       userRepository.findById = jest.fn((id) => Promise.resolve(user));
 
       await authMiddleware.withAdmin(req, res, next);

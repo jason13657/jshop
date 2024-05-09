@@ -16,3 +16,7 @@ export function getFakeUserTObject(options?: { admin?: boolean }): UserT {
 
   return fakeUser;
 }
+
+export function getFakeJWTToken() {
+  return faker.string.alphanumeric(128);
+}
