@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "concurrently \"tsc -w\" \"nodemon dist/index.js\"",
-    "test": "jest"
+    "test": "jest --verbose --coverage"
   },
   "author": "",
   "license": "ISC",

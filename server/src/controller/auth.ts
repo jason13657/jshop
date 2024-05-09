@@ -8,7 +8,11 @@ export default class AuthController {
   private passwordEncryptor: PasswordEncryptor;
   private jwt: JWTHandler;
 
-  constructor(userRepository: UserRepository, jwtHandler: JWTHandler, passwordEncryptor: PasswordEncryptor) {
+  constructor(
+    userRepository: UserRepository,
+    jwtHandler: JWTHandler,
+    passwordEncryptor: PasswordEncryptor
+  ) {
     this.userRepository = userRepository;
     this.passwordEncryptor = passwordEncryptor;
     this.jwt = jwtHandler;
@@ -24,14 +28,15 @@ export default class AuthController {
     if (!isPasswordValid) return res.status(401).json({ message: "invalid password" });
 
     const token = this.jwt.create(user.id, user.admin && user.admin);
-    res.status(201).json({ token, username });
+    res.status(201).json({ token, username, admin: user.admin ?? false });
   };
 
   signUp = async (req: Request, res: Response) => {
     const { username, password, email, name } = req.body;
 
     const usernameCheck = await this.userRepository.findByUsername(username);
-    if (usernameCheck) return res.status(409).json({ message: "Username already exists" });
+    if (usernameCheck)
+      return res.status(409).json({ message: "Username already exists" });
 
     const emailCheck = await this.userRepository.findByEmail(email);
     if (emailCheck) return res.status(409).json({ message: "Email already exists" });
@@ -64,7 +69,9 @@ export default class AuthController {
       if (!user) {
         return res.status(401).json({ message: "User not found" });
       }
-      res.status(200).json({ token, username: user.username });
+      res
+        .status(200)
+        .json({ token, username: user.username, admin: user.admin ?? false });
     } catch (error) {
       return res.status(401).json({ message: "Invalid jwt token" });
     }

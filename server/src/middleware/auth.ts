@@ -36,7 +36,7 @@ export default class AuthMiddleware {
   withAdmin = async (req: Request, res: Response, next: NextFunction) => {
     const authHeader = req.get("Authorization");
     if (!(authHeader && authHeader.startsWith("Bearer "))) {
-      return res.status(401).json({ message: "No bearer request" });
+      return res.status(401).json({ message: "No Bearer on header" });
     }
 
     const token = authHeader.split(" ")[1];
@@ -47,7 +47,10 @@ export default class AuthMiddleware {
       if (!user) {
         return res.status(401).json({ message: "User not found" });
       }
-      if (!admin) {
+      if (user.admin == undefined || user.admin !== true) {
+        return res.status(401).json({ message: "Request is not from admin" });
+      }
+      if (admin == undefined || admin !== true) {
         return res.status(401).json({ message: "Request is not from admin" });
       }
       req.userId = user.id;
