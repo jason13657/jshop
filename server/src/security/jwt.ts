@@ -2,7 +2,6 @@ import jwt, { UserIDJwtPayload } from "jsonwebtoken";
 import { Request, Response, NextFunction } from "express";
 
 import { config } from "../../config";
-import { boolean } from "zod";
 
 declare module "jsonwebtoken" {
   export interface UserIDJwtPayload extends jwt.JwtPayload {
