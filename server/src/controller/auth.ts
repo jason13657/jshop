@@ -1,18 +1,19 @@
 import { Request, Response, NextFunction } from "express";
 import { UserRepository } from "../repository/user";
-import { PasswordEncryptor } from "../security/password";
 import { JWTHandler } from "../security/jwt";
-import { config } from "../../config";
+import { Encryptor } from "../security/encryptor";
 
 export default class AuthController {
   private userRepository: UserRepository;
-  private passwordEncryptor: PasswordEncryptor;
+  private encryptor: Encryptor;
   private jwt: JWTHandler;
+  private csrfToken: string;
 
-  constructor(userRepository: UserRepository, jwtHandler: JWTHandler, passwordEncryptor: PasswordEncryptor) {
+  constructor(userRepository: UserRepository, jwtHandler: JWTHandler, encryptor: Encryptor, csrfToken: string) {
     this.userRepository = userRepository;
-    this.passwordEncryptor = passwordEncryptor;
+    this.encryptor = encryptor;
     this.jwt = jwtHandler;
+    this.csrfToken = csrfToken;
   }
 
   login = async (req: Request, res: Response) => {
@@ -24,7 +25,7 @@ export default class AuthController {
       return res.status(401).json({ message: "Invalid username" });
     }
 
-    const isPasswordValid = await this.passwordEncryptor.compare(password, user.password);
+    const isPasswordValid = await this.encryptor.compare(password, user.password);
     if (!isPasswordValid) {
       return res.status(401).json({ message: "Invalid password" });
     }
@@ -47,7 +48,7 @@ export default class AuthController {
       return res.status(409).json({ message: "Email already exists" });
     }
 
-    const hashed = await this.passwordEncryptor.hash(password);
+    const hashed = await this.encryptor.hash(password);
 
     const userId = await this.userRepository.createUser({
       username,
@@ -68,11 +69,20 @@ export default class AuthController {
   };
 
   me = async (req: Request, res: Response) => {
+    let token;
     const authHeader = req.get("Authorization");
-    if (!(authHeader && authHeader.startsWith("Bearer "))) {
-      return res.status(401).json({ message: "No Bearer on header" });
+    if (authHeader && authHeader.startsWith("Bearer ")) {
+      token = authHeader.split(" ")[1];
     }
-    const token = authHeader.split(" ")[1];
+
+    if (!token) {
+      token = req.cookies["token"];
+    }
+
+    if (!token) {
+      res.status(401).json({ message: "No token on requset" });
+      return;
+    }
 
     try {
       const { id } = await this.jwt.verify(token);
@@ -85,5 +95,10 @@ export default class AuthController {
     } catch (error) {
       return res.status(401).json({ message: "Invalid jwt token" });
     }
+  };
+
+  csrf = async (req: Request, res: Response) => {
+    const csrfToken = await this.encryptor.hash(this.csrfToken);
+    res.status(200).json({ csrfToken });
   };
 }

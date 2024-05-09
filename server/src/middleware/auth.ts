@@ -15,22 +15,20 @@ export default class AuthMiddleware {
     const authHeader = req.get("Authorization");
     if (authHeader && authHeader.startsWith("Bearer ")) {
       token = authHeader.split(" ")[1];
-      return token;
     }
 
-    if (req.cookies["token"]) {
+    if (!token) {
       token = req.cookies["token"];
-      return token;
     }
 
-    return;
+    return token;
   };
 
   withAuth = async (req: Request, res: Response, next: NextFunction) => {
     const token = this.validateToken(req);
 
     if (!token) {
-      res.status(401).json({ message: "No Bearer on header" });
+      res.status(401).json({ message: "No token on request" });
       return;
     }
 
@@ -53,7 +51,7 @@ export default class AuthMiddleware {
     const token = this.validateToken(req);
 
     if (!token) {
-      res.status(401).json({ message: "No Bearer on header" });
+      res.status(401).json({ message: "No token on request" });
       return;
     }
 

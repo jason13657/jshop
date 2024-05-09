@@ -3,7 +3,7 @@ import AuthMiddleware from "../auth";
 import httpMocks from "node-mocks-http";
 import { UserT, userRepository } from "../../repository/user";
 import { jwtHandler } from "../../security/jwt";
-import { getFakeJWTToken, getFakeUserTObject } from "../../utils/fake";
+import { getFakeToken, getFakeUserTObject } from "../../utils/fake";
 
 jest.mock("../../security/jwt");
 jest.mock("../../repository/user");
@@ -25,7 +25,7 @@ describe("Auth Middlewere", () => {
 
       expect(res.statusCode).toBe(401);
 
-      expect(res._getJSONData().message).toBe("No Bearer on header");
+      expect(res._getJSONData().message).toBe("No token on request");
       expect(next).toHaveBeenCalledTimes(0);
     });
     it("returns 401 when user not found by user id", async () => {
@@ -48,15 +48,14 @@ describe("Auth Middlewere", () => {
       expect(res._getJSONData().message).toBe("User not found");
       expect(next).toHaveBeenCalledTimes(0);
     });
-    it("passes with valid Authorization header and token", async () => {
-      const token = getFakeJWTToken();
+    it("passes with valid token in cookie", async () => {
+      const token = getFakeToken();
 
       const req = httpMocks.createRequest({
         method: "GET",
         url: "/fake",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: {},
+        cookies: { token },
       });
       const res = httpMocks.createResponse();
       const next = jest.fn();
@@ -155,7 +154,7 @@ describe("Auth Middlewere", () => {
       expect(next).toHaveBeenCalledTimes(0);
     });
     it("passes with valid Authorization header and token and repository data", async () => {
-      const token = getFakeJWTToken();
+      const token = getFakeToken();
       const req = httpMocks.createRequest({
         method: "GET",
         url: "/fake",
@@ -192,6 +191,18 @@ describe("Auth Middlewere", () => {
 
       expect(res.statusCode).toBe(401);
       expect(res._getJSONData().message).toBe("Invalid jwt token");
+      expect(next).toHaveBeenCalledTimes(0);
+    });
+    it("returns 401 without Bearer Authorization header", async () => {
+      const req = httpMocks.createRequest({ method: "GET", url: "/fake" });
+      const res = httpMocks.createResponse();
+      const next = jest.fn();
+
+      await authMiddleware.withAdmin(req, res, next);
+
+      expect(res.statusCode).toBe(401);
+
+      expect(res._getJSONData().message).toBe("No token on request");
       expect(next).toHaveBeenCalledTimes(0);
     });
   });

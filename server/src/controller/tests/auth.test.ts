@@ -1,21 +1,22 @@
 import AuthController from "../auth";
 import httpMocks from "node-mocks-http";
-import { passwordEncryptor } from "../../security/password";
 import { jwtHandler } from "../../security/jwt";
 import { userRepository } from "../../repository/user";
-import { getFakeJWTToken, getFakeUserTObject } from "../../utils/fake";
+import { getFakeToken, getFakeUserTObject } from "../../utils/fake";
+import { encryptor } from "../../security/encryptor";
 
 // Please use async function!!!!!!!!!!!!! async and await!!!!!!
 
 jest.mock("../../repository/user");
-jest.mock("../../security/password");
+jest.mock("../../security/encryptor");
 jest.mock("../../security/jwt");
 
 describe("Auth Controller", () => {
   let authController: AuthController;
 
   beforeEach(() => {
-    authController = new AuthController(userRepository, jwtHandler, passwordEncryptor);
+    const csrfToken = getFakeToken();
+    authController = new AuthController(userRepository, jwtHandler, encryptor, csrfToken);
   });
 
   describe("Login", () => {
@@ -50,7 +51,7 @@ describe("Auth Controller", () => {
       const res = httpMocks.createResponse();
 
       userRepository.findByUsername = jest.fn((username) => Promise.resolve(user));
-      passwordEncryptor.compare = jest.fn(() => Promise.resolve(false));
+      encryptor.compare = jest.fn(() => Promise.resolve(false));
 
       await authController.login(req, res);
 
@@ -58,7 +59,7 @@ describe("Auth Controller", () => {
       expect(res._getJSONData().message).toBe("Invalid password");
     });
     it("passess with valid username and password - admin case", async () => {
-      const token = getFakeJWTToken();
+      const token = getFakeToken();
       const user = getFakeUserTObject({ admin: true });
       const req = httpMocks.createRequest({
         method: "POST",
@@ -71,7 +72,7 @@ describe("Auth Controller", () => {
       const res = httpMocks.createResponse();
 
       userRepository.findByUsername = jest.fn((username) => Promise.resolve(user));
-      passwordEncryptor.compare = jest.fn(() => Promise.resolve(true));
+      encryptor.compare = jest.fn(() => Promise.resolve(true));
       jwtHandler.create = jest.fn(() => token);
 
       await authController.login(req, res);
@@ -84,7 +85,7 @@ describe("Auth Controller", () => {
       });
     });
     it("passess with valid username and password", async () => {
-      const token = getFakeJWTToken();
+      const token = getFakeToken();
       const user = getFakeUserTObject();
       const req = httpMocks.createRequest({
         method: "POST",
@@ -97,7 +98,7 @@ describe("Auth Controller", () => {
       const res = httpMocks.createResponse();
 
       userRepository.findByUsername = jest.fn((username) => Promise.resolve(user));
-      passwordEncryptor.compare = jest.fn(() => Promise.resolve(true));
+      encryptor.compare = jest.fn(() => Promise.resolve(true));
       jwtHandler.create = jest.fn(() => token);
 
       await authController.login(req, res);
@@ -157,7 +158,7 @@ describe("Auth Controller", () => {
 
     it("returns 201 and token, username when sign up success", async () => {
       const user = getFakeUserTObject({ admin: false });
-      const token = getFakeJWTToken();
+      const token = getFakeToken();
 
       const req = httpMocks.createRequest({
         method: "POST",
@@ -183,18 +184,20 @@ describe("Auth Controller", () => {
   });
 
   describe("Me", () => {
-    it("returns 401 without Bearer Authorization header", async () => {
-      const req = httpMocks.createRequest({ method: "GET", url: "/fake" });
+    it("returns 401 without token on header or cookie", async () => {
+      const req = httpMocks.createRequest({
+        method: "GET",
+        url: "/fake",
+      });
       const res = httpMocks.createResponse();
 
       await authController.me(req, res);
 
       expect(res.statusCode).toBe(401);
-      expect(res._getJSONData().message).toBe("No Bearer on header");
+      expect(res._getJSONData().message).toBe("No token on requset");
     });
-
     it("passes with valid Authorization header and token", async () => {
-      const token = getFakeJWTToken();
+      const token = getFakeToken();
       const user = getFakeUserTObject({ admin: true });
       const req = httpMocks.createRequest({
         method: "GET",
@@ -213,15 +216,14 @@ describe("Auth Controller", () => {
       expect(res.statusCode).toBe(200);
       expect(res._getJSONData()).toMatchObject({ token, username: user.username, admin: user.admin ?? false });
     });
-    it("passes with valid Authorization header and token - admin case", async () => {
-      const token = getFakeJWTToken();
-      const user = getFakeUserTObject();
+    it("passes with valid token with in cookies ", async () => {
+      const token = getFakeToken();
+      const user = getFakeUserTObject({ admin: true });
       const req = httpMocks.createRequest({
         method: "GET",
         url: "/fake",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: {},
+        cookies: { token },
       });
       const res = httpMocks.createResponse();
 
@@ -234,7 +236,7 @@ describe("Auth Controller", () => {
       expect(res._getJSONData()).toMatchObject({ token, username: user.username, admin: user.admin ?? false });
     });
     it("returns 401 when username is not found", async () => {
-      const token = getFakeJWTToken();
+      const token = getFakeToken();
       const req = httpMocks.createRequest({
         method: "GET",
         url: "/fake",
@@ -252,7 +254,7 @@ describe("Auth Controller", () => {
       expect(res._getJSONData().message).toBe("User not found");
     });
     it("returns 401 when jwt token is invalid", async () => {
-      const token = getFakeJWTToken();
+      const token = getFakeToken();
       const req = httpMocks.createRequest({
         method: "GET",
         url: "/fake",

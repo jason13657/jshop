@@ -10,7 +10,8 @@ import { authRouter } from "./src/router/auth";
 import AuthController from "./src/controller/auth";
 import { userRepository } from "./src/repository/user";
 import { jwtHandler } from "./src/security/jwt";
-import { passwordEncryptor } from "./src/security/password";
+import { encryptor } from "./src/security/encryptor";
+import AuthMiddleware from "./src/middleware/auth";
 
 const app = express();
 
@@ -24,7 +25,8 @@ app.use(
 app.use(helmet());
 app.use(morgan("tiny"));
 
-app.use("/auth", authRouter(new AuthController(userRepository, jwtHandler, passwordEncryptor)));
+// router
+app.use("/auth", authRouter(new AuthController(userRepository, jwtHandler, encryptor, config.security.csrfToken)));
 
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
   console.error(err);

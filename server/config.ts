@@ -21,5 +21,6 @@ export const config = {
   },
   security: {
     saltRounds: 12,
+    csrfToken: validate("CSRF_TOKEN"),
   },
 };

@@ -2,6 +2,7 @@ import { Router } from "express";
 import AuthController from "../controller/auth";
 import { body } from "express-validator";
 import { validate } from "../middleware/validate";
+import AuthMiddleware from "../middleware/auth";
 
 const validateCredential = [
   body("username") //
@@ -29,5 +30,6 @@ export const authRouter = (authController: AuthController) => {
   router.post("/signup", validateSignup, authController.signUp);
   router.post("/login", validateCredential, authController.login);
   router.get("/me", authController.me);
+  router.get("/csrf-token", authController.csrf);
   return router;
 };
