@@ -25,9 +25,12 @@ app.use(
 app.use(helmet());
 app.use(morgan("tiny"));
 
+//controller
+const authController = new AuthController(userRepository, jwtHandler, encryptor, config.security.csrfToken);
+
 // router
 app.use(validateCSRF);
-app.use("/auth", authRouter(new AuthController(userRepository, jwtHandler, encryptor, config.security.csrfToken)));
+app.use("/auth", authRouter(authController));
 
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
   console.error(err);
