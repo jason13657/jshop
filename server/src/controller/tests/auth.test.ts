@@ -173,7 +173,7 @@ describe("Auth Controller", () => {
 
       userRepository.findByUsername = jest.fn((username) => Promise.resolve(null));
       userRepository.findByEmail = jest.fn((username) => Promise.resolve(null));
-      userRepository.createUser = jest.fn();
+      userRepository.create = jest.fn();
       jwtHandler.create = jest.fn(() => token);
 
       await authController.signUp(req, res);

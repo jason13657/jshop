@@ -7,6 +7,7 @@ export type UserT = {
   password: string;
   id: string;
   admin?: boolean;
+  createdAt: Date;
 };
 
 const userSchema = new Schema<UserT>({
@@ -14,7 +15,8 @@ const userSchema = new Schema<UserT>({
   name: { type: String, required: true },
   email: { type: String, required: true },
   password: { type: String, required: true },
-  admin: { type: Boolean, required: true },
+  admin: { type: Boolean, required: false },
+  createdAt: { type: Date, required: true },
 });
 
 setSchemaID(userSchema);
@@ -35,7 +37,7 @@ export interface UserRepository {
   findByEmail: (email: string) => Promise<UserT | null>;
   findByUsername: (username: string) => Promise<UserT | null>;
   findById: (id: string) => Promise<UserT | null>;
-  createUser: (user: Omit<UserT, "id">) => Promise<string>; //returns id of user created.
+  create: (user: Omit<UserT, "id" | "createdAt">) => Promise<string>; //returns id of user created.
 }
 
 export const userRepository: UserRepository = {
@@ -48,7 +50,7 @@ export const userRepository: UserRepository = {
   findById: async (id: string): Promise<UserT | null> => {
     return User.findById(id);
   },
-  createUser: async (user: Omit<UserT, "id">): Promise<string> => {
-    return new User(user).save().then((data) => data.id);
+  create: async (user: Omit<UserT, "id" | "createdAt">): Promise<string> => {
+    return new User({ ...user, createdAt: new Date() }).save().then((data) => data.id);
   },
 };

@@ -21,6 +21,8 @@ export default class AuthController {
 
     const user = await this.userRepository.findByUsername(username);
 
+    console.log(user);
+
     if (user === null) {
       return res.status(401).json({ message: "Invalid username" });
     }
@@ -50,17 +52,16 @@ export default class AuthController {
 
     const hashed = await this.encryptor.hash(password);
 
-    const userId = await this.userRepository.createUser({
+    const userId = await this.userRepository.create({
       username,
       name,
       password: hashed,
       email,
-      admin: false,
     });
 
     const token = this.jwt.create(userId);
     this.jwt.secureToken(res, token);
-    res.status(201).json({ token, username });
+    res.status(201).json({ token, username, admin: false });
   };
 
   signOut = (req: Request, res: Response) => {

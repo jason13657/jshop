@@ -12,7 +12,7 @@ export async function validateCSRF(req: Request, res: Response, next: NextFuncti
     return res.status(403).json({ message: "No CSRF token on header" });
   }
 
-  const validate = await encryptor.compare(reqToken, config.security.csrfToken);
+  const validate = await encryptor.compare(config.security.csrfToken, reqToken);
 
   if (!validate) {
     return res.status(403).json({ message: "Invalid csrf token" });

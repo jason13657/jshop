@@ -7,6 +7,7 @@ export function getFakeUserTObject(options?: { admin?: boolean }): UserT {
     name: faker.word.words(),
     email: faker.internet.email(),
     password: faker.internet.password(),
+    createdAt: faker.date.anytime(),
     id: faker.string.alphanumeric(32),
   };
 
