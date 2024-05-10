@@ -11,7 +11,7 @@ https://snyk.io/blog/how-to-protect-node-js-apps-from-csrf-attacks/
 
 ## PARADIGM :
 
-### oop
+### oop :
 
 https://en.wikipedia.org/wiki/Loose_coupling  
 https://en.wikipedia.org/wiki/Dependency_injection
