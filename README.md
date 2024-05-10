@@ -8,3 +8,10 @@ https://expressjs.com/en/api.html#res.cookie
 ### csrf attack secure :
 
 https://snyk.io/blog/how-to-protect-node-js-apps-from-csrf-attacks/
+
+## PARADIGM :
+
+### oop
+
+https://en.wikipedia.org/wiki/Loose_coupling  
+https://en.wikipedia.org/wiki/Dependency_injection
