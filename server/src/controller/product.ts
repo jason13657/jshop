@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { ProductRepository } from "../repository/product";
 
-// no need to do validate of req.
+// no need to do validate of req here.
 
 export default class ProductController {
   productRepository: ProductRepository;
@@ -13,6 +13,7 @@ export default class ProductController {
     const products = await this.productRepository.findAll();
     res.status(200).json(products);
   };
+
   getPopuler = async (req: Request, res: Response) => {
     const amount = req.query.amount;
 
@@ -23,6 +24,7 @@ export default class ProductController {
     const products = await this.productRepository.findPopuler(parseInt(amount));
     res.status(200).json(products);
   };
+
   getByCategory = async (req: Request, res: Response) => {
     const category = req.query.category;
 
@@ -33,6 +35,7 @@ export default class ProductController {
     const products = await this.productRepository.findByCategory(category);
     res.status(200).json(products);
   };
+
   getProduct = async (req: Request, res: Response) => {
     const id = req.params.id;
     const product = await this.productRepository.findById(id);
@@ -42,14 +45,16 @@ export default class ProductController {
       res.status(404).json({ message: "Product not found" });
     }
   };
+
   create = async (req: Request, res: Response) => {
-    const product = req.body;
+    const { product } = req.body;
     const id = await this.productRepository.create(product);
     return res.status(201).json({ id });
   };
+
   update = async (req: Request, res: Response) => {
     const id = req.params.id;
-    const product = req.body;
+    const { product } = req.body;
 
     const found = await this.productRepository.findById(id);
     if (!found) {
@@ -59,6 +64,7 @@ export default class ProductController {
     await this.productRepository.update(id, product);
     return res.status(200);
   };
+
   delete = async (req: Request, res: Response) => {
     const id = req.params.id;
     const found = await this.productRepository.findById(id);
