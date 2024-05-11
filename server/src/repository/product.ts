@@ -14,6 +14,16 @@ export type ProductT = {
   id: string;
 };
 
+export interface ProductRepository {
+  findAll: () => Promise<ProductT[]>;
+  findPopuler: (amount: number) => Promise<ProductT[]>;
+  findByCategory: (category: string) => Promise<ProductT[]>;
+  findById: (id: string) => Promise<ProductT | null>;
+  create: (product: Omit<ProductSchemaT, "id" | "createdAt" | "updatedAt" | "sales">) => Promise<string>;
+  update: (id: string, product: Partial<ProductT>) => Promise<void>;
+  delete: (id: string) => Promise<void>;
+}
+
 const productSchema = new Schema<ProductT>(
   {
     name: { type: String, required: true },
@@ -44,16 +54,6 @@ function setSchemaID(schema: ProductSchemaT) {
   });
   schema.set("toJSON", { virtuals: true });
   schema.set("toObject", { virtuals: true });
-}
-
-export interface ProductRepository {
-  findAll: () => Promise<ProductT[]>;
-  findPopuler: (amount: number) => Promise<ProductT[]>;
-  findByCategory: (category: string) => Promise<ProductT[]>;
-  findById: (id: string) => Promise<ProductT | null>;
-  create: (product: Omit<ProductSchemaT, "id" | "createdAt" | "updatedAt" | "sales">) => Promise<string>;
-  update: (id: string, product: Partial<ProductT>) => Promise<void>;
-  delete: (id: string) => Promise<void>;
 }
 
 export const productRepository: ProductRepository = {

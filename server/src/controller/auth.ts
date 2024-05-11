@@ -21,8 +21,6 @@ export default class AuthController {
 
     const user = await this.userRepository.findByUsername(username);
 
-    console.log(user);
-
     if (user === null) {
       return res.status(401).json({ message: "Invalid username" });
     }
