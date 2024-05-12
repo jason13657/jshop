@@ -47,21 +47,21 @@ export default class ProductController {
   };
 
   create = async (req: Request, res: Response) => {
-    const { product } = req.body;
+    const product = req.body;
     const id = await this.productRepository.create(product);
     return res.status(201).json({ id });
   };
 
   update = async (req: Request, res: Response) => {
     const id = req.params.id;
-    const { product } = req.body;
+    const partialProduct = req.body;
 
     const found = await this.productRepository.findById(id);
     if (!found) {
       res.status(404).json({ message: "Product not found" });
     }
 
-    await this.productRepository.update(id, product);
+    await this.productRepository.update(id, partialProduct);
     return res.status(200);
   };
 

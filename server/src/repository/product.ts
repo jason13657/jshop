@@ -1,26 +1,13 @@
 import { Schema, model } from "mongoose";
-
-type OptionT = Record<string, string[]>;
-
-export type ProductT = {
-  name: string;
-  price: number;
-  category: string;
-  url: string;
-  updatedAt: Date;
-  createdAt: Date;
-  option: OptionT;
-  sales: number;
-  id: string;
-};
+import { ProductCreateT, ProductT, ProductUpdateT } from "../schema/product";
 
 export interface ProductRepository {
   findAll: () => Promise<ProductT[]>;
   findPopuler: (amount: number) => Promise<ProductT[]>;
   findByCategory: (category: string) => Promise<ProductT[]>;
   findById: (id: string) => Promise<ProductT | null>;
-  create: (product: Omit<ProductSchemaT, "id" | "createdAt" | "updatedAt" | "sales">) => Promise<string>;
-  update: (id: string, product: Partial<ProductT>) => Promise<void>;
+  create: (product: ProductCreateT) => Promise<string>;
+  update: (id: string, product: ProductUpdateT) => Promise<void>;
   delete: (id: string) => Promise<void>;
 }
 
@@ -69,10 +56,10 @@ export const productRepository: ProductRepository = {
   findById: async (id: string): Promise<ProductT | null> => {
     return Product.findById(id);
   },
-  create: async (product: Omit<ProductSchemaT, "id" | "createdAt" | "updatedAt" | "sales">): Promise<string> => {
+  create: async (product: ProductCreateT): Promise<string> => {
     return new Product(product).save().then((data) => data.id);
   },
-  update: async (id: string, product: Partial<ProductT>) => {
+  update: async (id: string, product: ProductUpdateT) => {
     return Product.findByIdAndUpdate(id, product, { returnOriginal: false }).then(() => {});
   },
   delete: async (id: string) => {

@@ -1,12 +1,11 @@
 import { Router } from "express";
 import AuthController from "../controller/auth";
-import { validate } from "../middleware/validate/validate";
-import { validateCredential, validateSignup } from "../middleware/validate/auth";
+import { AuthValidate } from "../middleware/validate/auth";
 
 const router = Router();
 
-export const authRouter = (authController: AuthController) => {
-  // last middleware contains jwt token
+export const authRouter = ({ validateSignup, validateCredential }: AuthValidate, authController: AuthController) => {
+  // last middleware returns jwt token
   router.post("/signup", validateSignup, authController.signUp);
   router.post("/login", validateCredential, authController.login);
   router.get("/me", authController.me);

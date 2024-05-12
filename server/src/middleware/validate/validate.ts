@@ -1,10 +1,10 @@
 import { NextFunction, Request, Response } from "express";
-import { z, ZodError } from "zod";
+import { z, ZodError, ZodRawShape } from "zod";
 
-export function validate(schema: z.ZodObject<any, any>) {
+export function validate(schema: z.ZodObject<ZodRawShape>, where: keyof Request) {
   return (req: Request, res: Response, next: NextFunction) => {
     try {
-      schema.parse(req.body);
+      schema.parse(req[where]);
       next();
     } catch (error) {
       if (error instanceof ZodError) {

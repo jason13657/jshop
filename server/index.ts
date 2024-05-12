@@ -12,6 +12,7 @@ import { userRepository } from "./src/repository/user";
 import { jwtHandler } from "./src/security/jwt";
 import { encryptor } from "./src/security/encryptor";
 import { validateCSRF } from "./src/middleware/csrf";
+import { authValidate } from "./src/middleware/validate/auth";
 
 const app = express();
 
@@ -30,7 +31,7 @@ const authController = new AuthController(userRepository, jwtHandler, encryptor,
 
 // router
 app.use(validateCSRF);
-app.use("/auth", authRouter(authController));
+app.use("/auth", authRouter(authValidate, authController));
 
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
   console.error(err);

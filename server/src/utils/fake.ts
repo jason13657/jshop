@@ -22,3 +22,7 @@ export function getFakeUserTObject(options?: { admin?: boolean }): UserT {
 export function getFakeToken() {
   return faker.string.alphanumeric(128);
 }
+
+export function getFakeWord() {
+  return faker.word.words(1);
+}

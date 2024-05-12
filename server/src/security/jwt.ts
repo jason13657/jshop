@@ -11,7 +11,7 @@ declare module "jsonwebtoken" {
 }
 export interface JWTHandler {
   create: (value: string, admin?: boolean) => string;
-  verify: (token: string) => Promise<jwt.UserIDJwtPayload>;
+  verify: (token: string) => Promise<jwt.UserIDJwtPayload>; /// this return type is {id: string, admin?: boolean} type.
   secureToken: (res: Response, token: string) => void;
 }
 
