@@ -1,21 +1,72 @@
 import httpMocks from "node-mocks-http";
 import { productValidate } from "../product";
+import { getFakeCreateProduct, getFakeProduct } from "../../../utils/fake";
 
 describe("Product validate", () => {
+  describe("Validate Product", () => {
+    it("returns 200 with valid product type", () => {
+      const req = httpMocks.createRequest({
+        method: "POST",
+        body: getFakeProduct(),
+      });
+      const res = httpMocks.createResponse();
+      const next = jest.fn();
+
+      productValidate.validateProduct(req, res, next);
+
+      expect(res.statusCode).toBe(200);
+      expect(next).toHaveBeenCalledTimes(1);
+    });
+    it("returns 400 with invalid value type - expected string", () => {
+      const req = httpMocks.createRequest({
+        method: "POST",
+        body: { ...getFakeProduct(), name: 10 },
+      });
+      const res = httpMocks.createResponse();
+      const next = jest.fn();
+
+      productValidate.validateProduct(req, res, next);
+
+      expect(res.statusCode).toBe(400);
+      expect(res._getJSONData().message).toBe("Expected string, received number");
+      expect(next).toHaveBeenCalledTimes(0);
+    });
+    it("returns 400 with invalid option type", () => {
+      const req = httpMocks.createRequest({
+        method: "POST",
+        body: { ...getFakeProduct(), option: { size: "big" } },
+      });
+      const res = httpMocks.createResponse();
+      const next = jest.fn();
+
+      productValidate.validateProduct(req, res, next);
+
+      expect(res.statusCode).toBe(400);
+      expect(res._getJSONData().message).toBe("Expected array, received string");
+      expect(next).toHaveBeenCalledTimes(0);
+    });
+    it("returns 200 with invalid value type, expected number", () => {
+      const req = httpMocks.createRequest({
+        method: "POST",
+        body: { ...getFakeProduct(), price: "10" },
+      });
+      const res = httpMocks.createResponse();
+      const next = jest.fn();
+
+      productValidate.validateProduct(req, res, next);
+
+      expect(res.statusCode).toBe(400);
+      expect(res._getJSONData().message).toBe("Expected number, received string");
+      expect(next).toHaveBeenCalledTimes(0);
+    });
+  });
   describe("Validate Create Product", () => {
     it("returns 400 with unrecognized product key", () => {
       const key = "invalid";
 
       const req = httpMocks.createRequest({
         method: "POST",
-        body: {
-          [key]: key,
-          name: "name",
-          price: 1500,
-          category: "category",
-          url: "url",
-          option: {},
-        },
+        body: { ...getFakeCreateProduct(), [key]: key },
       });
       const res = httpMocks.createResponse();
       const next = jest.fn();
@@ -27,14 +78,12 @@ describe("Product validate", () => {
       expect(next).toHaveBeenCalledTimes(0);
     });
     it("return 400 with missing key", () => {
+      const product = { ...getFakeCreateProduct(), name: null };
+      const { name, ...missing } = product;
+
       const req = httpMocks.createRequest({
         method: "POST",
-        body: {
-          price: 1500,
-          category: "category",
-          url: "url",
-          option: {},
-        },
+        body: missing,
       });
       const res = httpMocks.createResponse();
       const next = jest.fn();
@@ -48,13 +97,7 @@ describe("Product validate", () => {
     it("returns 200 wtih create type of product", () => {
       const req = httpMocks.createRequest({
         method: "POST",
-        body: {
-          name: "name",
-          price: 1500,
-          category: "category",
-          url: "url",
-          option: {},
-        },
+        body: getFakeCreateProduct(),
       });
       const res = httpMocks.createResponse();
       const next = jest.fn();
@@ -142,7 +185,7 @@ describe("Product validate", () => {
       const res = httpMocks.createResponse();
       const next = jest.fn();
 
-      productValidate.validateId(req, res, next);
+      productValidate.validateIdParams(req, res, next);
 
       expect(res.statusCode).toBe(400);
       expect(res._getJSONData().message).toBe("Required");
@@ -158,7 +201,7 @@ describe("Product validate", () => {
       const res = httpMocks.createResponse();
       const next = jest.fn();
 
-      productValidate.validateId(req, res, next);
+      productValidate.validateIdParams(req, res, next);
 
       expect(res.statusCode).toBe(200);
       expect(next).toHaveBeenCalledTimes(1);

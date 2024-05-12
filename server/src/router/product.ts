@@ -7,7 +7,7 @@ const router = Router();
 
 export const productRouter = (
   {
-    validateId,
+    validateIdParams,
     validatePartialProduct,
     validateCreateProduct,
     validatePopularQuery,
@@ -18,7 +18,7 @@ export const productRouter = (
 ) => {
   router.get("/", productController.getProducts);
 
-  router.get("/:id", validateId, productController.getProduct);
+  router.get("/:id", validateIdParams, productController.getProduct);
 
   router.get("/category", validateCategoryQuery, productController.getByCategory);
 
@@ -26,9 +26,9 @@ export const productRouter = (
 
   router.post("/", withAdmin, validateCreateProduct, productController.create);
 
-  router.delete("/:id", withAdmin, validateId, productController.delete);
+  router.delete("/:id", withAdmin, validateIdParams, productController.delete);
 
-  router.put("/:id", withAdmin, validateId, validatePartialProduct, productController.update);
+  router.put("/:id", withAdmin, validateIdParams, validatePartialProduct, productController.update);
 
   return router;
 };

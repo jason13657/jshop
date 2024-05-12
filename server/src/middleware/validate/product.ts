@@ -30,7 +30,7 @@ const categoryReqQuerySchema = z
   .strict();
 
 export const productValidate = {
-  validateId: validate(productId, "params"),
+  validateIdParams: validate(productId, "params"),
   validateProduct: validate(productSchema, "body"),
   validatePartialProduct: validate(partialProductSchema, "body"),
   validateCreateProduct: validate(createProductSchema, "body"),

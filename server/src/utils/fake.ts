@@ -1,5 +1,6 @@
 import { UserT } from "../repository/user";
 import { faker } from "@faker-js/faker";
+import { ProductCreateT, ProductT, ProductUpdateT } from "../schema/product";
 
 export function getFakeUserTObject(options?: { admin?: boolean }): UserT {
   const fakeUser: UserT = {
@@ -25,4 +26,28 @@ export function getFakeToken() {
 
 export function getFakeWord() {
   return faker.word.words(1);
+}
+
+export function getFakeProduct(): ProductT {
+  return {
+    name: faker.word.words(),
+    price: faker.number.int(500),
+    category: faker.word.words(),
+    url: faker.internet.url(),
+    sales: 0,
+    option: { [faker.word.words()]: [faker.word.words(), faker.word.words(), faker.word.words()] },
+    updatedAt: new Date(),
+    createdAt: new Date(),
+    id: faker.string.uuid(),
+  };
+}
+
+export function getFakeCreateProduct(): ProductCreateT {
+  return {
+    name: faker.word.words(),
+    price: faker.number.int(500),
+    category: faker.word.words(),
+    url: faker.internet.url(),
+    option: {},
+  };
 }

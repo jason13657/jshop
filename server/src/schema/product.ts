@@ -10,7 +10,7 @@ export const productSchema = z
     createdAt: z.date(),
     option: z.record(z.array(z.string())),
     sales: z.number(),
-    id: z.string().min(1, "Test"),
+    id: z.string(),
   })
   .strict();
 
