@@ -13,9 +13,15 @@ import { jwtHandler } from "./src/security/jwt";
 import { encryptor } from "./src/security/encryptor";
 import { validateCSRF } from "./src/middleware/csrf";
 import { authValidate } from "./src/middleware/validate/auth";
+import { productRouter } from "./src/router/product";
+import { productValidate } from "./src/middleware/validate/product";
+import ProductController from "./src/controller/product";
+import { productRepository } from "./src/repository/product";
+import AuthMiddleware from "./src/middleware/auth";
 
 const app = express();
 
+// setting
 app.use(express.json());
 app.use(cookieParser());
 app.use(
@@ -28,10 +34,15 @@ app.use(morgan("tiny"));
 
 //controller
 const authController = new AuthController(userRepository, jwtHandler, encryptor, config.security.csrfToken);
+const productController = new ProductController(productRepository);
+
+//middleware
+const authMiddleware = new AuthMiddleware(userRepository, jwtHandler);
 
 // router
 app.use(validateCSRF);
 app.use("/auth", authRouter(authValidate, authController));
+app.use("/product", productRouter(productValidate, productController, authMiddleware));
 
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
   console.error(err);
