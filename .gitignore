@@ -3,6 +3,7 @@
 server/coverage/
 server/node_modules/
 server/.env
+server/.env.test
 server/dist/
 
 
