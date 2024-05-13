@@ -58,13 +58,15 @@ export default class AuthMiddleware {
     try {
       const { id, admin } = await this.jwtHandler.verify(token);
       const user = await this.userRepository.findById(id);
+
       if (!user) {
         return res.status(401).json({ message: "User not found" });
       }
-      if (user.admin == undefined || user.admin !== true) {
+
+      if (user.admin == undefined || user.admin == false) {
         return res.status(401).json({ message: "Request is not from admin" });
       }
-      if (admin == undefined || admin !== true) {
+      if (admin == undefined || admin == false) {
         return res.status(401).json({ message: "Request is not from admin" });
       }
       req.userId = user.id;

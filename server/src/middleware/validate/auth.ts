@@ -13,6 +13,7 @@ const signUp = validate(
   z.object({
     name: z.string().trim().min(1, "Name should not be empty."),
     email: z.string().email("This is not a valid email."),
+    admin: z.boolean(),
   }),
   "body"
 );

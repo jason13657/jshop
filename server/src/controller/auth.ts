@@ -30,13 +30,13 @@ export default class AuthController {
       return res.status(401).json({ message: "Invalid password" });
     }
 
-    const token = this.jwt.create(user.id, user.admin && user.admin);
+    const token = this.jwt.create(user.id, user.admin);
     this.jwt.secureToken(res, token);
     res.status(201).json({ token, username, admin: user.admin ?? false });
   };
 
   signUp = async (req: Request, res: Response) => {
-    const { username, password, email, name } = req.body;
+    const { username, password, email, name, admin } = req.body;
 
     const usernameCheck = await this.userRepository.findByUsername(username);
     if (usernameCheck) {
@@ -55,11 +55,12 @@ export default class AuthController {
       name,
       password: hashed,
       email,
+      admin,
     });
 
-    const token = this.jwt.create(userId);
+    const token = this.jwt.create(userId, admin);
     this.jwt.secureToken(res, token);
-    res.status(201).json({ token, username, admin: false });
+    res.status(201).json({ token, username, admin });
   };
 
   signOut = (req: Request, res: Response) => {
@@ -90,7 +91,7 @@ export default class AuthController {
         return res.status(401).json({ message: "User not found" });
       }
       this.jwt.secureToken(res, token);
-      res.status(200).json({ token, username: user.username, admin: user.admin ?? false });
+      res.status(200).json({ token, username: user.username, admin: user.admin });
     } catch (error) {
       return res.status(401).json({ message: "Invalid jwt token" });
     }

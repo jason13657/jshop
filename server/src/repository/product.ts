@@ -22,7 +22,6 @@ const productSchema = new Schema<ProductT>(
       required: true,
     },
     sales: { type: Number, required: false, default: 0 },
-    createdAt: { type: Date, required: true },
   },
   {
     timestamps: true,
@@ -54,7 +53,7 @@ export const productRepository: ProductRepository = {
     return Product.find({ category }).sort({ createdAt: -1 });
   },
   findById: async (id: string): Promise<ProductT | null> => {
-    return Product.findById(id);
+    return Product.findById(id).catch(() => null);
   },
   create: async (product: ProductCreateT): Promise<string> => {
     return new Product(product).save().then((data) => data.id);

@@ -10,13 +10,13 @@ declare module "jsonwebtoken" {
   }
 }
 export interface JWTHandler {
-  create: (value: string, admin?: boolean) => string;
+  create: (value: string, admin: boolean) => string;
   verify: (token: string) => Promise<jwt.UserIDJwtPayload>; /// this return type is {id: string, admin?: boolean} type.
   secureToken: (res: Response, token: string) => void;
 }
 
 export const jwtHandler: JWTHandler = {
-  create: (id: string, admin?: boolean) => {
+  create: (id: string, admin: boolean) => {
     return jwt.sign({ id, admin }, config.jwt.secretKey, { expiresIn: config.jwt.expiresInSec });
   },
   verify: (token: string) => {

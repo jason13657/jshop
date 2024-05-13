@@ -18,11 +18,11 @@ export const productRouter = (
 ) => {
   router.get("/", productController.getProducts);
 
-  router.get("/:id", validateIdParams, productController.getProduct);
-
   router.get("/category", validateCategoryQuery, productController.getByCategory);
 
   router.get("/populer", validatePopularQuery, productController.getPopuler);
+
+  router.get("/:id", validateIdParams, productController.getProduct);
 
   router.post("/", withAdmin, validateCreateProduct, productController.create);
 

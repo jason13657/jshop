@@ -11,6 +11,7 @@ export function getFakeUserTObject(options?: { admin?: boolean }): UserT {
     createdAt: faker.date.anytime(),
     updatedAt: faker.date.anytime(),
     id: faker.string.alphanumeric(32),
+    admin: options?.admin ?? false,
   };
 
   if (options && options.admin && options.admin == true) {
@@ -28,7 +29,7 @@ export function getFakeWord() {
   return faker.word.words(1);
 }
 
-export function getFakeProduct(): ProductT {
+export function getFakeProductTObject(): ProductT {
   return {
     name: faker.word.words(),
     price: faker.number.int(500),
@@ -42,7 +43,7 @@ export function getFakeProduct(): ProductT {
   };
 }
 
-export function getFakeCreateProduct(): ProductCreateT {
+export function getFakeCreateProductTObject(): ProductCreateT {
   return {
     name: faker.word.words(),
     price: faker.number.int(500),

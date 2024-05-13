@@ -1,13 +1,13 @@
 import httpMocks from "node-mocks-http";
 import { productValidate } from "../product";
-import { getFakeCreateProduct, getFakeProduct } from "../../../utils/fake";
+import { getFakeProductTObject, getFakeCreateProductTObject } from "../../../utils/fake";
 
 describe("Product validate", () => {
   describe("Validate Product", () => {
     it("returns 200 with valid product type", () => {
       const req = httpMocks.createRequest({
         method: "POST",
-        body: getFakeProduct(),
+        body: getFakeProductTObject(),
       });
       const res = httpMocks.createResponse();
       const next = jest.fn();
@@ -20,7 +20,7 @@ describe("Product validate", () => {
     it("returns 400 with invalid value type - expected string", () => {
       const req = httpMocks.createRequest({
         method: "POST",
-        body: { ...getFakeProduct(), name: 10 },
+        body: { ...getFakeProductTObject(), name: 10 },
       });
       const res = httpMocks.createResponse();
       const next = jest.fn();
@@ -34,7 +34,7 @@ describe("Product validate", () => {
     it("returns 400 with invalid option type", () => {
       const req = httpMocks.createRequest({
         method: "POST",
-        body: { ...getFakeProduct(), option: { size: "big" } },
+        body: { ...getFakeProductTObject(), option: { size: "big" } },
       });
       const res = httpMocks.createResponse();
       const next = jest.fn();
@@ -48,7 +48,7 @@ describe("Product validate", () => {
     it("returns 200 with invalid value type, expected number", () => {
       const req = httpMocks.createRequest({
         method: "POST",
-        body: { ...getFakeProduct(), price: "10" },
+        body: { ...getFakeProductTObject(), price: "10" },
       });
       const res = httpMocks.createResponse();
       const next = jest.fn();
@@ -66,7 +66,7 @@ describe("Product validate", () => {
 
       const req = httpMocks.createRequest({
         method: "POST",
-        body: { ...getFakeCreateProduct(), [key]: key },
+        body: { ...getFakeCreateProductTObject(), [key]: key },
       });
       const res = httpMocks.createResponse();
       const next = jest.fn();
@@ -78,7 +78,7 @@ describe("Product validate", () => {
       expect(next).toHaveBeenCalledTimes(0);
     });
     it("return 400 with missing key", () => {
-      const product = { ...getFakeCreateProduct(), name: null };
+      const product = { ...getFakeCreateProductTObject(), name: null };
       const { name, ...missing } = product;
 
       const req = httpMocks.createRequest({
@@ -97,7 +97,7 @@ describe("Product validate", () => {
     it("returns 200 wtih create type of product", () => {
       const req = httpMocks.createRequest({
         method: "POST",
-        body: getFakeCreateProduct(),
+        body: getFakeCreateProductTObject(),
       });
       const res = httpMocks.createResponse();
       const next = jest.fn();
