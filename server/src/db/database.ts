@@ -10,6 +10,6 @@ export async function deconnectDB() {
   return Mongoose.connection.close();
 }
 
-export async function dropCollection(collection: string) {
-  return Mongoose.connection.dropCollection(collection);
+export async function dropDatabase() {
+  return Mongoose.connection.dropDatabase();
 }

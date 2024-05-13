@@ -1,6 +1,6 @@
 import { Server, startServer, stopServer } from "../../..";
 import axios, { AxiosInstance } from "axios";
-import { dropCollection } from "../../db/database";
+import { dropDatabase } from "../../db/database";
 import { getFakeCreateProductTObject, getFakeProductTObject } from "../../utils/fake";
 import { createAccount } from "./utils";
 import { token } from "morgan";
@@ -24,8 +24,7 @@ describe("Product APIs Integration", () => {
   });
 
   afterAll(async () => {
-    await dropCollection("users");
-    await dropCollection("products");
+    await dropDatabase();
     await stopServer(server);
   });
 
