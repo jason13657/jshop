@@ -11,6 +11,7 @@ export async function createAccount(request: AxiosInstance, admin: boolean) {
 export async function createProduct(request: AxiosInstance) {
   const product = getFakeCreateProductTObject();
   const user = await createAccount(request, true);
+
   expect(user.status).toBe(201);
 
   const created = await request.post("/product", product, {

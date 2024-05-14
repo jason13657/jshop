@@ -29,7 +29,7 @@ describe("Product APIs Integration", () => {
   });
 
   describe("POST /product", () => {
-    //actually, i didn't need to do admin middlewate test. it can be done on auth intrgration side.
+    //actually, i didn't need to do admin middlewate test. it can be done on auth integration side.
     it("returns 401 with non-admin user", async () => {
       const product = getFakeProductTObject();
       const user = await createAccount(request, false);
@@ -64,7 +64,7 @@ describe("Product APIs Integration", () => {
   });
 
   describe("GET /product", () => {
-    it("it returns 200 with product", async () => {
+    it("returns 200 with product", async () => {
       const created1 = await createProduct(request);
       const created2 = await createProduct(request);
 
@@ -76,7 +76,7 @@ describe("Product APIs Integration", () => {
   });
 
   describe("GET /product/category", () => {
-    it("it returns 200 with category product", async () => {
+    it("returns 200 with category product", async () => {
       const created1 = await createProduct(request);
       const created2 = await createProduct(request);
 
@@ -89,7 +89,7 @@ describe("Product APIs Integration", () => {
   });
 
   describe("GET /product/populer", () => {
-    it("it returns 200 with pupular product - orderd by sales", async () => {
+    it("returns 200 with pupular product - orderd by sales", async () => {
       const created1 = await createProduct(request);
       const created2 = await createProduct(request);
       const created3 = await createProduct(request);
@@ -112,7 +112,7 @@ describe("Product APIs Integration", () => {
   });
 
   describe("GET /product:id", () => {
-    it("it returns 200 with product", async () => {
+    it("returns 200 with product", async () => {
       const { created, token, product } = await createProduct(request);
 
       const res = await request.get(`product/${created.data.id}`, {
@@ -131,7 +131,7 @@ describe("Product APIs Integration", () => {
   });
 
   describe("PUT /product/:id", () => {
-    it("it returns 200 after updated", async () => {
+    it("returns 200 after updated", async () => {
       const { created, token, product } = await createProduct(request);
 
       const res = await request.put(

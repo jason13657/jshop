@@ -4,8 +4,8 @@ import { ProductCreateT, ProductT, ProductUpdateT } from "../schema/product";
 
 export function getFakeUserTObject(options?: { admin?: boolean }): UserT {
   const fakeUser: UserT = {
-    username: faker.word.words(),
-    name: faker.word.words(),
+    username: faker.string.alphanumeric(10),
+    name: faker.string.alphanumeric(10),
     email: faker.internet.email(),
     password: faker.internet.password(),
     createdAt: faker.date.anytime(),

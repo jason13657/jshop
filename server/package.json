@@ -7,7 +7,7 @@
     "start": "concurrently \"tsc -w\" \"nodemon dist/index.js\"",
     "test": "cross-env DOTENV_CONFIG_PATH=./.env.test jest --verbose --coverage",
     "test:unit": "cross-env DOTENV_CONFIG_PATH=./.env.test jest --watchAll --verbose --testPathPattern=dist/src/ --testPathIgnorePatterns=integration",
-    "test:integration": "cross-env DOTENV_CONFIG_PATH=./.env.test jest --watchAll --verbose --testPathPattern=dist/src/tests/integration --testPathIgnorePatterns="
+    "test:integration": "cross-env DOTENV_CONFIG_PATH=./.env.test jest --watchAll --verbose --testPathPattern=/src/tests/integration  --testPathIgnorePatterns=dist"
   },
   "author": "",
   "license": "ISC",
