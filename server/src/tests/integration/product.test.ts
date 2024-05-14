@@ -63,6 +63,54 @@ describe("Product APIs Integration", () => {
     });
   });
 
+  describe("GET /product", () => {
+    it("it returns 200 with product", async () => {
+      const created1 = await createProduct(request);
+      const created2 = await createProduct(request);
+
+      const res = await request.get(`/product`, {});
+
+      expect(res.status).toBe(200);
+      expect(res.data.length).toBeGreaterThanOrEqual(2);
+    });
+  });
+
+  describe("GET /product/category", () => {
+    it("it returns 200 with category product", async () => {
+      const created1 = await createProduct(request);
+      const created2 = await createProduct(request);
+
+      const res = await request.get(`/product/category?category=${created1.product.category}`);
+
+      expect(res.status).toBe(200);
+      expect(res.data.length).toBeGreaterThanOrEqual(1);
+      expect(res.data[0].category).toBe(created1.product.category);
+    });
+  });
+
+  describe("GET /product/populer", () => {
+    it("it returns 200 with pupular product - orderd by sales", async () => {
+      const created1 = await createProduct(request);
+      const created2 = await createProduct(request);
+      const created3 = await createProduct(request);
+
+      const purchased = await request.put(
+        `/product/purchase/${created2.created.data.id}`,
+        {},
+        {
+          headers: { Authorization: `Bearer ${created1.token}` },
+        }
+      );
+      expect(purchased.status).toBe(200);
+
+      const res = await request.get(`/product/populer?amount=10`);
+
+      expect(res.status).toBe(200);
+      expect(res.data.length).toBeGreaterThanOrEqual(3);
+      expect(res.data[0].name).toBe(created2.product.name);
+    });
+  });
+
   describe("GET /product:id", () => {
     it("it returns 200 with product", async () => {
       const { created, token, product } = await createProduct(request);
@@ -98,7 +146,7 @@ describe("Product APIs Integration", () => {
     });
   });
   describe("PUT /product/purchase:id", () => {
-    it("returns 200 and updated product", async () => {
+    it("returns 200 after updated increase sales", async () => {
       const { created, token } = await createProduct(request);
 
       const res = await request.put(
@@ -109,12 +157,12 @@ describe("Product APIs Integration", () => {
         }
       );
 
-      const updated = await request.get(`product/${created.data.id}`, {
+      const increased = await request.get(`product/${created.data.id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
       expect(res.status).toBe(200);
-      expect(updated.data).toMatchObject({ ...updated.data, sales: 1 });
+      expect(increased.data).toMatchObject({ ...increased.data, sales: 1 });
     });
   });
   describe("DELETE /product", () => {
