@@ -26,6 +26,7 @@ export async function startServer(port?: number) {
   app.use(cookieParser());
   app.use(
     cors({
+      origin: "http://localhost:3000",
       credentials: true,
     })
   );
@@ -53,8 +54,6 @@ export async function startServer(port?: number) {
   console.log("Database connected");
 
   const server = app.listen(port);
-
-
 
   return server;
 }
