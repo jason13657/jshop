@@ -29,6 +29,7 @@ describe("Product APIs Integration", () => {
   });
 
   describe("POST /product", () => {
+    //actually, i didn't need to do admin middlewate test. it can be done on auth intrgration side.
     it("returns 401 with non-admin user", async () => {
       const product = getFakeProductTObject();
       const user = await createAccount(request, false);
@@ -80,6 +81,22 @@ describe("Product APIs Integration", () => {
       });
     });
   });
+
+  describe("PUT /product/:id", () => {
+    it("it returns 200 after updated", async () => {
+      const { created, token, product } = await createProduct(request);
+
+      const res = await request.put(
+        `/product/${created.data.id}`,
+        { name: "name" },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      expect(res.status).toBe(200);
+    });
+  });
   describe("PUT /product/purchase:id", () => {
     it("returns 200 and updated product", async () => {
       const { created, token } = await createProduct(request);
@@ -91,10 +108,28 @@ describe("Product APIs Integration", () => {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
-      console.log(created.data.id);
-      console.log(res.data);
+
+      const updated = await request.get(`product/${created.data.id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
 
       expect(res.status).toBe(200);
+      expect(updated.data).toMatchObject({ ...updated.data, sales: 1 });
+    });
+  });
+  describe("DELETE /product", () => {
+    it("return 204 after delete", async () => {
+      const { created, token } = await createProduct(request);
+      const res = await request.delete(`/product/${created.data.id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      const found = await request.get(`product/${created.data.id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      expect(res.status).toBe(204);
+      expect(found.status).toBe(404);
     });
   });
 });

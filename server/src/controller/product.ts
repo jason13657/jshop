@@ -11,7 +11,7 @@ export default class ProductController {
 
   getProducts = async (req: Request, res: Response) => {
     const products = await this.productRepository.findAll();
-    res.status(200).json(products);
+    return res.status(200).json(products);
   };
 
   getPopuler = async (req: Request, res: Response) => {
@@ -22,7 +22,7 @@ export default class ProductController {
     }
 
     const products = await this.productRepository.findPopuler(parseInt(amount));
-    res.status(200).json(products);
+    return res.status(200).json(products);
   };
 
   getByCategory = async (req: Request, res: Response) => {
@@ -33,7 +33,7 @@ export default class ProductController {
     }
 
     const products = await this.productRepository.findByCategory(category);
-    res.status(200).json(products);
+    return res.status(200).json(products);
   };
 
   getProduct = async (req: Request, res: Response) => {
@@ -41,9 +41,9 @@ export default class ProductController {
 
     const product = await this.productRepository.findById(id);
     if (product) {
-      res.status(200).send(product);
+      return res.status(200).send(product);
     } else {
-      res.status(404).json({ message: "Product not found" });
+      return res.status(404).json({ message: "Product not found" });
     }
   };
 
@@ -59,11 +59,12 @@ export default class ProductController {
 
     const found = await this.productRepository.findById(id);
     if (!found) {
-      res.status(404).json({ message: "Product not found" });
+      return res.status(404).json({ message: "Product not found" });
     }
 
     await this.productRepository.update(id, partialProduct);
-    return res.status(200);
+
+    return res.sendStatus(200);
   };
 
   delete = async (req: Request, res: Response) => {
@@ -75,20 +76,19 @@ export default class ProductController {
     }
 
     await this.productRepository.delete(id);
-    return res.status(204);
+    return res.sendStatus(204);
   };
 
   increaseSale = async (req: Request, res: Response) => {
     const id = req.params.id;
 
     const found = await this.productRepository.findById(id);
-
     if (!found) {
       return res.status(404).json({ message: "Product not found" });
     }
 
-    await this.productRepository.update(found.id, { ...found, sales: found.sales + 1 });
+    await this.productRepository.update(found.id, { sales: found.sales + 1 });
 
-    return res.status(200);
+    return res.sendStatus(200);
   };
 }

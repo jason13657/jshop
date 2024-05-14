@@ -28,8 +28,7 @@ export default class AuthMiddleware {
     const token = this.validateToken(req);
 
     if (!token) {
-      res.status(401).json({ message: "No token on request" });
-      return;
+      return res.status(401).json({ message: "No token on request" });
     }
 
     try {
@@ -51,8 +50,7 @@ export default class AuthMiddleware {
     const token = this.validateToken(req);
 
     if (!token) {
-      res.status(401).json({ message: "No token on request" });
-      return;
+      return res.status(401).json({ message: "No token on request" });
     }
 
     try {

@@ -31,7 +31,7 @@ export function getFakeWord() {
 
 export function getFakeProductTObject(): ProductT {
   return {
-    name: faker.word.words(),
+    name: faker.word.words(2),
     price: faker.number.int(500),
     category: faker.word.words(),
     url: faker.internet.url(),

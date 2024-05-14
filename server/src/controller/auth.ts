@@ -32,7 +32,7 @@ export default class AuthController {
 
     const token = this.jwt.create(user.id, user.admin);
     this.jwt.secureToken(res, token);
-    res.status(201).json({ token, username, admin: user.admin ?? false });
+    return res.status(201).json({ token, username, admin: user.admin ?? false });
   };
 
   signUp = async (req: Request, res: Response) => {
@@ -60,12 +60,12 @@ export default class AuthController {
 
     const token = this.jwt.create(userId, admin);
     this.jwt.secureToken(res, token);
-    res.status(201).json({ token, username, admin });
+    return res.status(201).json({ token, username, admin });
   };
 
   signOut = (req: Request, res: Response) => {
     res.cookie("token", "");
-    res.status(200).json({ message: "Sign out" });
+    return res.status(200).json({ message: "Sign out" });
   };
 
   me = async (req: Request, res: Response) => {
@@ -80,8 +80,7 @@ export default class AuthController {
     }
 
     if (!token) {
-      res.status(401).json({ message: "No token on requset" });
-      return;
+      return res.status(401).json({ message: "No token on requset" });
     }
 
     try {

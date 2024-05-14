@@ -59,7 +59,7 @@ export const productRepository: ProductRepository = {
     return new Product(product).save().then((data) => data.id);
   },
   update: async (id: string, product: ProductUpdateT) => {
-    return Product.findByIdAndUpdate(id, product, { returnOriginal: false }).then(() => {});
+    return Product.findByIdAndUpdate(id, product, { new: true }).then(() => {});
   },
   delete: async (id: string) => {
     return Product.findByIdAndDelete(id).then(() => {});

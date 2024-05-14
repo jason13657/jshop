@@ -54,6 +54,8 @@ export async function startServer(port?: number) {
 
   const server = app.listen(port);
 
+
+
   return server;
 }
 
