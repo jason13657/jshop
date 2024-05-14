@@ -214,7 +214,11 @@ describe("Auth Controller", () => {
       await authController.me(req, res);
 
       expect(res.statusCode).toBe(200);
-      expect(res._getJSONData()).toMatchObject({ token, username: user.username, admin: user.admin ?? false });
+      expect(res._getJSONData()).toMatchObject({
+        token,
+        username: user.username,
+        admin: user.admin ?? false,
+      });
     });
     it("passes with valid token with in cookies ", async () => {
       const token = getFakeToken();
@@ -233,7 +237,11 @@ describe("Auth Controller", () => {
       await authController.me(req, res);
 
       expect(res.statusCode).toBe(200);
-      expect(res._getJSONData()).toMatchObject({ token, username: user.username, admin: user.admin ?? false });
+      expect(res._getJSONData()).toMatchObject({
+        token,
+        username: user.username,
+        admin: user.admin ?? false,
+      });
     });
     it("returns 401 when username is not found", async () => {
       const token = getFakeToken();

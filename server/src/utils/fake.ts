@@ -49,6 +49,6 @@ export function getFakeCreateProductTObject(): ProductCreateT {
     price: faker.number.int(500),
     category: faker.word.words(),
     url: faker.internet.url(),
-    option: {},
+    option: { [faker.word.words()]: [faker.word.words(), faker.word.words(), faker.word.words()] },
   };
 }

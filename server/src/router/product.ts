@@ -28,6 +28,8 @@ export const productRouter = (
 
   router.delete("/:id", withAdmin, validateIdParams, productController.delete);
 
+  router.put("/purchase:id", withAdmin, validateIdParams, productController.increaseSale);
+
   router.put("/:id", withAdmin, validateIdParams, validatePartialProduct, productController.update);
 
   return router;

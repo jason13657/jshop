@@ -2,7 +2,7 @@ import { Server, startServer, stopServer } from "../../..";
 import axios, { AxiosInstance } from "axios";
 import { dropDatabase } from "../../db/database";
 import { getFakeCreateProductTObject, getFakeProductTObject } from "../../utils/fake";
-import { createAccount } from "./utils";
+import { createAccount, createProduct } from "./utils";
 import { token } from "morgan";
 import { AddressInfo } from "net";
 
@@ -59,6 +59,42 @@ describe("Product APIs Integration", () => {
 
       expect(res.status).toBe(400);
       expect(res.data.message).toBe("Required");
+    });
+  });
+
+  describe("GET /product:id", () => {
+    it("it returns 200 with product", async () => {
+      const { created, token, product } = await createProduct(request);
+
+      const res = await request.get(`product/${created.data.id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      expect(res.status).toBe(200);
+      expect(res.data).toMatchObject({
+        ...product,
+        id: created.data.id,
+        sales: 0,
+        updatedAt: res.data.updatedAt,
+        createdAt: res.data.createdAt,
+      });
+    });
+  });
+  describe("PUT /product/purchase:id", () => {
+    it("returns 200 and updated product", async () => {
+      const { created, token } = await createProduct(request);
+
+      const res = await request.put(
+        `/product/purchase/${created.data.id}`,
+        {},
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      console.log(created.data.id);
+      console.log(res.data);
+
+      expect(res.status).toBe(200);
     });
   });
 });

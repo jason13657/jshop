@@ -38,6 +38,7 @@ export default class ProductController {
 
   getProduct = async (req: Request, res: Response) => {
     const id = req.params.id;
+
     const product = await this.productRepository.findById(id);
     if (product) {
       res.status(200).send(product);
@@ -70,10 +71,24 @@ export default class ProductController {
     const found = await this.productRepository.findById(id);
 
     if (!found) {
-      res.status(404).json({ message: "Product not found" });
+      return res.status(404).json({ message: "Product not found" });
     }
 
     await this.productRepository.delete(id);
     return res.status(204);
+  };
+
+  increaseSale = async (req: Request, res: Response) => {
+    const id = req.params.id;
+
+    const found = await this.productRepository.findById(id);
+
+    if (!found) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
+    await this.productRepository.update(found.id, { ...found, sales: found.sales + 1 });
+
+    return res.status(200);
   };
 }
