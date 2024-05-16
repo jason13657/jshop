@@ -1,4 +1,5 @@
 import axios, { AxiosHeaders, AxiosInstance } from "axios";
+import { getCSRFToken } from "../provider/auth";
 
 type ReqOptions<T> = {
   method: keyof AxiosInstance;
@@ -14,6 +15,8 @@ export class HTTPClient {
       headers: { "Content-Type": "application/json" },
       withCredentials: true,
     });
+    const csrfToken = getCSRFToken();
+    this.client.defaults.headers.common["jshop-token"] = csrfToken;
   }
   async fetch<T>(url: string, options: ReqOptions<T>) {
     const { method, headers, body } = options;

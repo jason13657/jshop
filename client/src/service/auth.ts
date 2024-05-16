@@ -6,29 +6,35 @@ export default class AuthService {
     this.httpClient = httpClient;
   }
 
-  async signup(auth: SignUpAuthT): Promise<AuthT> {
+  signup = async (auth: SignUpAuthT): Promise<AuthT> => {
     return this.httpClient.fetch("/auth/signup", {
       method: "post",
       body: auth,
     });
-  }
+  };
 
-  async login(auth: LoginAuthT): Promise<AuthT> {
+  login = async (auth: LoginAuthT): Promise<AuthT> => {
     return this.httpClient.fetch("/auth/login", {
       method: "post",
       body: auth,
     });
-  }
+  };
 
-  async me(): Promise<AuthT> {
+  me = async (): Promise<AuthT> => {
     return this.httpClient.fetch("/auth/me", {
       method: "get",
     });
-  }
+  };
 
-  async signout() {
+  signout = async () => {
     return this.httpClient.fetch("/auth/signout", {
       method: "post",
     });
-  }
+  };
+
+  csrf = async (): Promise<Record<"csrfToken", string>> => {
+    return this.httpClient.fetch("/auth/csrf-token", {
+      method: "get",
+    });
+  };
 }
