@@ -8,6 +8,7 @@ export const authRouter = ({ validateSignup, validateCredential }: AuthValidate,
   // last middleware returns jwt token
   router.post("/signup", validateSignup, authController.signUp);
   router.post("/login", validateCredential, authController.login);
+  router.post("/signout", authController.signOut);
   router.get("/me", authController.me);
   router.get("/csrf-token", authController.csrf);
   return router;

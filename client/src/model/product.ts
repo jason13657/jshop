@@ -11,3 +11,7 @@ export type ProductT = {
   sales: number;
   id: string;
 };
+
+export type ProductCreateT = Omit<ProductT, "id" | "createdAt" | "updatedAt" | "sales">;
+
+export type ProductUpdateT = Partial<Omit<ProductT, "id" | "createdAt" | "updatedAt">>;

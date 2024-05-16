@@ -1,5 +1,5 @@
 import { Category } from "../component/Category";
-import { ProductT } from "../model/product";
+import { ProductCreateT, ProductT, ProductUpdateT } from "../model/product";
 import { HTTPClient } from "../network/http";
 
 export class ProductService {
@@ -8,21 +8,47 @@ export class ProductService {
     this.httpClient = httpClient;
   }
 
-  async getProducts(): Promise<ProductT[]> {
+  getAll = async (): Promise<ProductT[]> => {
     return this.httpClient.fetch("/product", {
       method: "get",
     });
-  }
+  };
 
-  async getProductsByCategory(category: Category): Promise<ProductT[]> {
+  getByCategory = async (category: Category): Promise<ProductT[]> => {
     return this.httpClient.fetch(`/product/category?category=${category}`, {
       method: "get",
     });
-  }
+  };
 
-  async getPopulerProducts(amount: string): Promise<ProductT[]> {
+  getPopuler = async (amount: string): Promise<ProductT[]> => {
     return this.httpClient.fetch(`/product/populer?amount=${amount}`, {
       method: "get",
     });
-  }
+  };
+
+  create = async (product: ProductCreateT): Promise<string> => {
+    return this.httpClient.fetch("/product", {
+      method: "post",
+      body: product,
+    });
+  };
+
+  update = async (id: string, product: ProductUpdateT) => {
+    return this.httpClient.fetch(`product/${id}`, {
+      method: "put",
+      body: product,
+    });
+  };
+
+  purchase = async (id: string) => {
+    return this.httpClient.fetch(`product/purchase/${id}`, {
+      method: "put",
+    });
+  };
+
+  delete = async (id: string) => {
+    return this.httpClient.fetch(`product/purchase/${id}`, {
+      method: "delete",
+    });
+  };
 }
