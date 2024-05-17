@@ -9,14 +9,14 @@ type ReqOptions<T> = {
 
 export class HTTPClient {
   private client: AxiosInstance;
-  constructor(baseURL: string) {
+  private getCSRFToken: () => string | undefined;
+  constructor(baseURL: string, getCSRFToken: () => string | undefined) {
     this.client = axios.create({
       baseURL: baseURL,
       headers: { "Content-Type": "application/json" },
       withCredentials: true,
     });
-    const csrfToken = getCSRFToken();
-    this.client.defaults.headers.common["jshop-token"] = csrfToken;
+    this.getCSRFToken = getCSRFToken;
   }
   async fetch<T>(url: string, options: ReqOptions<T>) {
     const { method, headers, body } = options;
@@ -27,6 +27,7 @@ export class HTTPClient {
       data: body,
     };
 
+    this.client.defaults.headers.common["jshop-token"] = this.getCSRFToken() ?? "";
     return this.client(req)
       .then((res) => res.data)
       .catch((err) => {

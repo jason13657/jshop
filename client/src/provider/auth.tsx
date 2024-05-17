@@ -12,14 +12,13 @@ type CSRFHandle = {
   getToken: () => string | undefined;
 };
 
-type AuthContextValue = {
-  auth: AuthT | undefined;
+type AuthController = {
   signUp: (auth: SignUpAuthT) => Promise<void>;
   login: (auth: LoginAuthT) => Promise<void>;
   signout: () => Promise<any>;
 };
 
-const AuthContext = createContext<AuthContextValue | undefined>(undefined);
+const AuthContext = createContext<(AuthController & { auth: AuthT | undefined }) | undefined>(undefined);
 
 const csrfRef = createRef<CSRFHandle>();
 
@@ -60,7 +59,7 @@ export default function AuthProvider({ children, authService }: Props) {
     return authService.signout();
   }, []);
 
-  return <AuthContext.Provider value={{ auth, signout, login, signUp }}>{children}</AuthContext.Provider>;
+  return <AuthContext.Provider value={{ signout, login, signUp, auth }}>{children}</AuthContext.Provider>;
 }
 
 export const getCSRFToken = () => csrfRef.current?.getToken();
