@@ -33,6 +33,10 @@ export default function AuthProvider({ children, authService }: Props) {
 
   useEffect(() => {
     authService.me().then(setAuth).catch(console.error);
+    AuthErrorEventBus.getInstance().listen((err) => {
+      console.error(err);
+      setAuth(undefined);
+    });
   }, [authService]);
 
   useEffect(() => {

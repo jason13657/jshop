@@ -1,5 +1,4 @@
 import axios, { AxiosHeaders, AxiosInstance } from "axios";
-import { getCSRFToken } from "../provider/auth";
 
 type ReqOptions<T> = {
   method: keyof AxiosInstance;
@@ -31,6 +30,10 @@ export class HTTPClient {
     return this.client(req)
       .then((res) => res.data)
       .catch((err) => {
+        if (err.response.status == 401) {
+          AuthErrorEventBus.getInstance().notify(err);
+          return;
+        }
         if (err.response && err.response.data) {
           throw Error(err.response.data.message);
         } else {
