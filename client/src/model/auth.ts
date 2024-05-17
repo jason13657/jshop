@@ -1,10 +1,10 @@
-type AuthT = {
+export type AuthT = {
   token: string;
   username: string;
   admin: boolean;
 };
 
-type SignUpAuthT = {
+export type SignUpAuthT = {
   username: string;
   password: string;
   name: string;
@@ -12,7 +12,7 @@ type SignUpAuthT = {
   admin: string;
 };
 
-type LoginAuthT = {
+export type LoginAuthT = {
   username: string;
   password: string;
 };

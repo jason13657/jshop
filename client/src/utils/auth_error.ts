@@ -17,3 +17,5 @@ class AuthErrorEventBus {
     AuthErrorEventBus.callback(error);
   }
 }
+
+export default AuthErrorEventBus;

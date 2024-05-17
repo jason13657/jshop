@@ -1,3 +1,4 @@
+import { AuthT, LoginAuthT, SignUpAuthT } from "../model/auth";
 import { HTTPClient } from "../network/http";
 
 export default class AuthService {

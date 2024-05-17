@@ -1,9 +1,10 @@
 import axios, { AxiosHeaders, AxiosInstance } from "axios";
+import AuthErrorEventBus from "../utils/auth_error";
 
 type ReqOptions<T> = {
   method: keyof AxiosInstance;
   headers?: AxiosHeaders;
-  body?: Record<string, T>;
+  body?: T;
 };
 
 export class HTTPClient {
